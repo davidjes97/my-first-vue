@@ -16,7 +16,7 @@
     </div>
 
     <div>
-      <button id="removeButton" v-on:click="remove">Remove Selection(s)</button>
+      <v-btn color="primary" id="removeButton" @click="remove" v-bind:disabled="userSelections.length == 0">Remove Selection(s)</v-btn>
     </div>
     <table id="expenseList">
       <thead>
@@ -39,7 +39,7 @@
           </td>
         </tr>
         <tr>
-          <td id="total" class="totalText" colspan="3">Total</td>
+          <td id="total" class="totalText" colspan="4">Total</td>
           <td id="total">{{ totalExpense.toFixed(2) }}</td>
         </tr>
       </tbody>

@@ -25,36 +25,45 @@
         />
       </div>
 
-      <v-spacer></v-spacer>
+      
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn  @click="doSignOut" v-show="isLoggedIn === true">SignOut</v-btn>  
     </v-app-bar>
 
-    <v-content>
-      <Budget/>
-    </v-content>
+  <v-content>
+    <router-view/>
+  </v-content>
   </v-app>
 </template>
 
 <script>
-import Budget from './components/Budget';
+import { AppAUTH } from './db-init.js';
 
 export default {
   name: 'App',
 
-  components: {
-    Budget,
-  },
+  // components:{
+  //   Login,
+  // },
 
   data: () => ({
-    //
+    isLoggedIn: false
   }),
+  
+
+  methods: {
+    doSignOut(){
+      AppAUTH.signOut().then(() => {
+        this.$router.back();
+      });
+    }
+  },
+  mounted(){
+    AppAUTH.onAuthStateChanged((u) => {
+      if(u == null) this.isLoggedIn = false;
+      else this.isLoggedIn = true;
+    });
+  }
 };
 </script>
