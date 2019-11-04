@@ -4,5 +4,7 @@ import App from './App.vue'
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+  render: function(gimme_a_component){
+    return gimme_a_component(App);
+  }
+}).$mount('#app') 
