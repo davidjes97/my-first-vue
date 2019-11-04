@@ -4,28 +4,19 @@
       <h2>Jesse David</h2>
     </div>
     <div id="expenseform">
-      <label for="what">Description</label>
-      <input type="text" v-model="expenseDesc" />
-      <label for="amt">Amount</label>
-      <input type="number" v-model.number="expenseAmt" />
-      <label>Date</label>
-      <input type="date" v-model="expenseDate" />
-      <!-- <input type="date" v-model="expenseDate"/> -->
-      <label>Category</label>
-      <select type="text" v-model="expenseCategory">
-        <option disabled value>Please select one</option>
-        <option value="Food">Food</option>
-        <option value="Gas">Gas</option>
-        <option value="Education">Education</option>
-        <option value="Clothing">Clothing</option>
-      </select>
-
-      <p></p>
-      <button v-on:click="fbAddHandler">Add</button>
+      <v-text-field label="Description" type="text" v-model="expenseDesc" />
+      <v-text-field label="Amount" type="number" v-model="expenseAmt"/>
+      <v-text-field label="Date" type="date" v-model="expenseDate"/>
+      <v-select
+        v-model="expenseCat"
+        v-bind:items="expenseCategory"
+        label="Category"
+      ></v-select>
+      <v-btn color="primary" @click="yourButtonHandler">Add</v-btn>
     </div>
 
     <div>
-      <button id="removeButton" v-on:click="removeExpenseItem">Remove Selection(s)</button>
+      <button id="removeButton" v-on:click="remove">Remove Selection(s)</button>
     </div>
     <table id="expenseList">
       <thead>
@@ -58,63 +49,68 @@
 
 <script>
 import { AppDB } from "../db-init.js";
-
 export default {
-  data() {
+  data: function() {
     return {
+      userSelections: [],
       myExpense: [],
       totalExpense: 0,
       expenseDesc: "",
       expenseAmt: 0,
-      expenseDate: new Date(),
-      expenseCategory: ""
+      expenseCat: "",
+      expenseDate: "",
+      expenseCategory: ["Food", "Gas","Education", "Clothing", "Other"]
     };
   },
-  mounted() {
-    AppDB.ref("budget").on("child_added", this.fbAddHandler);
-    AppDB.ref("budget").on("child_removed", this.removeExpenseItem);
-  },
   methods: {
+    yourButtonHandler() {
+      //alert(`You enter ${this.expenseAmt}`);
+      AppDB.ref("budget")
+        .push()
+        .set({
+          description: this.expenseDesc,
+          amount: this.expenseAmt,
+          date: this.expenseDate,
+          category: this.expenseCat
+        });
+    },
+
     fbAddHandler(snapshot) {
       const item = snapshot.val();
       this.myExpense.push({ ...item, mykey: snapshot.key });
-      this.totalExpense = this.myExpense.reduce(
-        (sum, e) => sum + Number(e.amount),
-        0
-      );
+      // accumulate the total
+      this.totalExpense += item.amount;
     },
-
-    removeExpenseItem(snapshot){
+    fbRemoveListener(snapshot) {
+      /* snapshot.key will hold the key of the item being REMOVED */
       this.myExpense = this.myExpense.filter(z => z.mykey != snapshot.key);
-      this.totalExpense = this.myExpense.reduce(
-        (sum, z) => sum + Number(z.amount),
-        0
-      );
     },
-
     selectionHandler(changeEvent) {
+      // The ID of the checkbox is also the key of the record in Firebase
       const whichKey = changeEvent.target.id;
-      const eventTarget = changeEvent.target;
-
-      eventTarget;
       if (changeEvent.target.checked) {
-        this.userSelections.push(String(whichKey));
+        this.userSelections.push(whichKey);
       } else {
-        this.userSelections = this.userSelections.filter(e=> {         
-          return e != whichKey;
-        });
+        this.userSelections = this.userSelections.filter(id => id != whichKey);
       }
-      this.length = this.userSelections.length;
-      },
-      deleteSelections(){
-        this.userSelections.forEach(victimKey => {
-          AppDB.ref("budget")
-            .child(victimKey)
-            .remove();
-        });
-      }
+    },
+    remove() {
+      this.userSelections.forEach(victimKey => {
+        AppDB.ref("budget")
+          .child(victimKey)
+          .remove();
+      });
     }
+  },
+  mounted() {
+    AppDB.ref("budget").on("child_added", this.fbAddHandler);
+    AppDB.ref("budget").on("child_removed", this.fbRemoveListener);
+  },
+  beforeDestroy() {
+    AppDB.ref("budget").off("child_added", this.fbAddHandler);
+    AppDB.ref("budget").off("child_removed", this.fbRemoveListener);
   }
+};
 </script>
 
 <style scoped>
@@ -150,8 +146,7 @@ thead {
 }
 #expenseform {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: auto;
   border-radius: 10px;
   border: 2px solid gray;
   margin: 20px;
