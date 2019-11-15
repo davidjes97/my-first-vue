@@ -2,6 +2,7 @@
     <div class="form">
         <v-text-field label="Your Email" v-model="userEmail"></v-text-field>
         <v-text-field type="password" label="Password" v-model="userPassword"></v-text-field>
+        <p></p>
         <v-container v-show="isLoggedIn === false">
             <v-row justify="end">
                 <v-btn @click="doSignUp">SignUp</v-btn>
@@ -57,5 +58,10 @@
     .form {
         width: 50vw;
         border: 1px solid black;
+    }
+
+    button {
+        margin: 5px;
+        padding: 5px;
     }
 </style>

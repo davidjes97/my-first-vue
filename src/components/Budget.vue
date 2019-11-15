@@ -1,13 +1,12 @@
 <template>
     <div>
-        <h2>Ryan Eisenbarth</h2>
+        <h2>Jesse David</h2>
         <div id="expenseform" class="form">
             <v-text-field label="Description" type="text" v-model="expenseDesc" />
             <v-text-field label="Amount" type="number" v-model="expenseAmt" />
             <v-text-field label="Category" type="text" v-model="expenseCat" />
             <v-text-field label="Date" type="date" v-model="expenseDate" />
-            <v-btn color="primary" @click="yourButtonHandler">Add</v-btn>
-            <v-btn color="primary" @click="remove" v-bind:disabled="userSelections.length == 0">Remove Selection(s)</v-btn>
+            <v-btn color="primary" @click="yourButtonHandler">Add</v-btn>&nbsp;&nbsp;<v-btn color="primary" @click="remove" v-bind:disabled="userSelections.length == 0">Remove Selection(s)</v-btn>
         </div>
         <table>
             <tbody>
@@ -114,13 +113,15 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr; 
+        margin: 5px;
     }
 
     table{
         border: 1px solid black;
+        margin: 5px;
     }
     table th{
-        background: rgb(13,66,102);
+        background: #009688;
         color: white;
     }
 
@@ -140,5 +141,11 @@
     .num{
         text-align: right;
     }
+
+    button {
+        margin: 5px;
+        padding: 25px;
+    }
+
 
 </style>
