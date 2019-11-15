@@ -12,12 +12,3 @@ new Vue({
   render: (h) => h(App), router: AppRouter 
 
 }).$mount("#app");
-
-
-/*new Vue({
-  vuetify,
-
-  render: function(gimme_a_component) {
-    return gimme_a_component(App);
-  }
-}).$mount("#app");*/
