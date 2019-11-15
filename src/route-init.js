@@ -14,7 +14,7 @@ const AppRouter = new VueRouter({
     routes: routeTable, 
     mode: "history",
     base: process.env.NODE_ENV === "production"
-    ? "/davidjes97.github.io/my-first-vue/"
+    ? "/my-first-vue/"
     : "/"
     });
 export { AppRouter };
